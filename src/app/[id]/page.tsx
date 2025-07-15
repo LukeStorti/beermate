@@ -3,13 +3,7 @@ import { AuthForm } from "@/modules/auth/auth-form";
 import { Beers } from "@/modules/profile/beers";
 import Image from "next/image";
 
-type Props = {
-  params: {
-    id?: string;
-  };
-};
-
-export default async function Profile({ params }: Props) {
+export default async function Profile({ params }: { params: { id?: string } }) {
   const { id: userId } = params;
 
   if (!userId) {
