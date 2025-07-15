@@ -4,7 +4,9 @@ import { Beers } from "@/modules/profile/beers";
 import Image from "next/image";
 
 export default async function Profile({ params }: { params: { id: string } }) {
-  const user = await getUser(params.id);
+  const { id } = params;
+
+  const user = await getUser(id);
   if (!user) {
     return <AuthForm />;
   }
