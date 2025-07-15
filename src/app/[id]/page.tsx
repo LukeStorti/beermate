@@ -3,7 +3,9 @@ import { AuthForm } from "@/modules/auth/auth-form";
 import { Beers } from "@/modules/profile/beers";
 import Image from "next/image";
 
-export default async function Profile({ params }: { params: { id: string } }) {
+type Params = Promise<{ id: string }>;
+
+export default async function Profile({ params }: { params: Params }) {
   const { id } = await params;
 
   const user = await getUser(id);
