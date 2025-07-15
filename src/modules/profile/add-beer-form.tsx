@@ -8,6 +8,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useBurpSounds } from "@/hooks/useBurpSounds";
+import { LoaderCircle } from "lucide-react";
 
 interface AddBeerFormProps {
   onCancel: () => void;
@@ -19,6 +20,7 @@ const volumes = [330, 440, 500, 660, 750];
 export function AddBeerForm({ onCancel, userId }: AddBeerFormProps) {
   const playRandomBurp = useBurpSounds();
   const [selected, setSelected] = useState<number | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
   const handleAddBeer = async () => {
@@ -26,10 +28,12 @@ export function AddBeerForm({ onCancel, userId }: AddBeerFormProps) {
       return;
     }
     try {
+      setIsLoading(true);
       await addBeer(userId, selected);
       playRandomBurp();
       router.refresh();
       onCancel();
+      setIsLoading(false);
     } catch (error) {
       console.log(error);
       toast.error("Try again");
@@ -58,7 +62,7 @@ export function AddBeerForm({ onCancel, userId }: AddBeerFormProps) {
             className="flex-1 text-white cursor-pointer"
             onClick={handleAddBeer}
           >
-            Add Beer
+            {isLoading ? <LoaderCircle className="animate-spin" /> : "Add Beer"}
           </Button>
           <Button
             onClick={onCancel}
