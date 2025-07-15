@@ -4,7 +4,7 @@ import { Beers } from "@/modules/profile/beers";
 import Image from "next/image";
 
 export default async function Profile({ params }: { params: { id: string } }) {
-  const { id } = params;
+  const { id } = await params;
 
   const user = await getUser(id);
   if (!user) {
