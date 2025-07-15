@@ -3,15 +3,8 @@ import { AuthForm } from "@/modules/auth/auth-form";
 import { Beers } from "@/modules/profile/beers";
 import Image from "next/image";
 
-export default async function Profile({ params }: { params: { id?: string } }) {
-  const { id: userId } = params;
-
-  if (!userId) {
-    return <AuthForm />;
-  }
-
-  const user = await getUser(userId);
-
+export default async function Profile({ params }: { params: { id: string } }) {
+  const user = await getUser(params.id);
   if (!user) {
     return <AuthForm />;
   }
