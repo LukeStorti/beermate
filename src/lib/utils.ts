@@ -25,3 +25,13 @@ export function getDrunkLevelMessage(litres: number): string {
   if (litres < 10000) return "A lake of lager 🪣";
   return "You're a myth. A beer god 🍺⚡";
 }
+
+export function getBadge(beers: number): string | null {
+  if (beers >= 200) return "Tanked Titan";
+  if (beers >= 100) return "Beer Baron";
+  if (beers >= 50) return "Half Century";
+  if (beers >= 24) return "Crate Master";
+  if (beers >= 12) return "The Dozen";
+  if (beers >= 6) return "Six-Pack";
+  return null;
+}

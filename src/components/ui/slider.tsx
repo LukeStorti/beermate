@@ -1,63 +1,115 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import * as SliderPrimitive from "@radix-ui/react-slider"
+import * as React from "react";
+import * as SliderPrimitive from "@radix-ui/react-slider";
+import { cn } from "@/lib/utils";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Label } from "./label";
 
-import { cn } from "@/lib/utils"
+type SliderProps = React.ComponentPropsWithoutRef<typeof SliderPrimitive.Root> & {
+  showTooltip?: boolean;
+  hasMarks?: boolean;
+  labelTitle?: string;
+  labelValue?: number;
+  labelFor?: string;
+};
 
-function Slider({
-  className,
-  defaultValue,
-  value,
-  min = 0,
-  max = 100,
-  ...props
-}: React.ComponentProps<typeof SliderPrimitive.Root>) {
-  const _values = React.useMemo(
-    () =>
-      Array.isArray(value)
-        ? value
-        : Array.isArray(defaultValue)
-          ? defaultValue
-          : [min, max],
-    [value, defaultValue, min, max]
-  )
+const SliderTooltip = React.forwardRef<
+  React.ComponentRef<typeof SliderPrimitive.Root>,
+  SliderProps
+>(
+  (
+    {
+      className,
+      showTooltip = false,
+      hasMarks = false,
+      labelTitle,
+      labelValue,
+      labelFor,
+      ...props
+    },
+    ref
+  ) => {
+    const [value, setValue] = React.useState<number[]>(
+      props.defaultValue ? [...props.defaultValue] : [0]
+    );
+    const [showTooltipState, setShowTooltipState] = React.useState(false);
+    const space = props.max && props.step ? props?.max / props.step : 0;
 
-  return (
-    <SliderPrimitive.Root
-      data-slot="slider"
-      defaultValue={defaultValue}
-      value={value}
-      min={min}
-      max={max}
-      className={cn(
-        "relative flex w-full touch-none items-center select-none data-[disabled]:opacity-50 data-[orientation=vertical]:h-full data-[orientation=vertical]:min-h-44 data-[orientation=vertical]:w-auto data-[orientation=vertical]:flex-col",
-        className
-      )}
-      {...props}
-    >
-      <SliderPrimitive.Track
-        data-slot="slider-track"
-        className={cn(
-          "bg-muted relative grow overflow-hidden rounded-full data-[orientation=horizontal]:h-1.5 data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-1.5"
+    const handlePointerDown = () => {
+      setShowTooltipState(true);
+    };
+
+    const handlePointerUp = React.useCallback(() => {
+      setShowTooltipState(false);
+    }, []);
+
+    React.useEffect(() => {
+      document.addEventListener("pointerup", handlePointerUp);
+      return () => {
+        document.removeEventListener("pointerup", handlePointerUp);
+      };
+    }, [handlePointerUp]);
+
+    return (
+      <div className="grid gap-6">
+        {labelFor && labelTitle && (
+          <Label
+            htmlFor={labelFor}
+            className="justify-between pl-0.5 text-primary font-bold"
+          >
+            <span>{labelTitle}</span>
+            <span>R{labelValue}</span>
+          </Label>
         )}
-      >
-        <SliderPrimitive.Range
-          data-slot="slider-range"
-          className={cn(
-            "bg-primary absolute data-[orientation=horizontal]:h-full data-[orientation=vertical]:w-full"
-          )}
-        />
-      </SliderPrimitive.Track>
-      {Array.from({ length: _values.length }, (_, index) => (
-        <SliderPrimitive.Thumb
-          data-slot="slider-thumb"
-          key={index}
-          className="border-primary bg-background ring-ring/50 block size-4 shrink-0 rounded-full border shadow-sm transition-[color,box-shadow] hover:ring-4 focus-visible:ring-4 focus-visible:outline-hidden disabled:pointer-events-none disabled:opacity-50"
-        />
-      ))}
-    </SliderPrimitive.Root>
-  )
-}
 
-export { Slider }
+        <SliderPrimitive.Root
+          ref={ref}
+          className={cn("relative flex w-full touch-none select-none items-center", className)}
+          onValueChange={(val) => {
+            setValue(val);
+            props.onValueChange?.(val);
+          }}
+          onPointerDown={handlePointerDown}
+          {...props}
+        >
+          <SliderPrimitive.Track className="relative h-1 w-full grow overflow-hidden rounded-full bg-primary/20">
+            <SliderPrimitive.Range className="absolute h-full bg-primary" />
+          </SliderPrimitive.Track>
+
+          {hasMarks && (
+            <div className="absolute inset-0 flex grow w-full items-center justify-between px-[7px]">
+              {Array.from({ length: space + 1 }).map((_, index) => (
+                <div
+                  className="w-1 h-2 rounded-full bg-primary"
+                  key={index}
+                ></div>
+              ))}
+            </div>
+          )}
+
+          <TooltipProvider>
+            <Tooltip open={showTooltip && showTooltipState}>
+              <TooltipTrigger
+                asChild
+                className="pointer-events-none"
+              >
+                <SliderPrimitive.Thumb
+                  className="block h-4 w-4 rounded-full border border-primary/50 bg-background shadow transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+                  onMouseEnter={() => setShowTooltipState(true)}
+                  onMouseLeave={() => setShowTooltipState(false)}
+                />
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>{value[0]}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </SliderPrimitive.Root>
+      </div>
+    );
+  }
+);
+
+SliderTooltip.displayName = "SliderTooltip";
+export default SliderTooltip;

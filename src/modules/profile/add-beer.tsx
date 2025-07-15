@@ -7,7 +7,7 @@ import useSound from "use-sound";
 
 export function AddBeer({ userId }: { userId: string }) {
   const [formIsVisible, setFormIsVisible] = useState(false);
-  const [play] = useSound("/open.mp3", { volume: 0.3 });
+  const [play] = useSound("/open.mp3", { volume: 0.008 });
 
   const toggleForm = () => {
     if (!formIsVisible) {

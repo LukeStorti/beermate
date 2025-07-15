@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useBurpSounds } from "@/hooks/useBurpSounds";
 import { LoaderCircle } from "lucide-react";
+import SliderTooltip from "@/components/ui/slider";
 
 interface AddBeerFormProps {
   onCancel: () => void;
@@ -21,6 +22,7 @@ export function AddBeerForm({ onCancel, userId }: AddBeerFormProps) {
   const playRandomBurp = useBurpSounds();
   const [selected, setSelected] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [price, setPrice] = useState([0]);
   const router = useRouter();
 
   const handleAddBeer = async () => {
@@ -29,7 +31,7 @@ export function AddBeerForm({ onCancel, userId }: AddBeerFormProps) {
     }
     try {
       setIsLoading(true);
-      await addBeer(userId, selected);
+      await addBeer(userId, selected, price[0]);
       playRandomBurp();
       router.refresh();
       onCancel();
@@ -56,8 +58,18 @@ export function AddBeerForm({ onCancel, userId }: AddBeerFormProps) {
             </Button>
           ))}
         </div>
-
-        <div className="flex gap-2 w-full">
+        <SliderTooltip
+          id="Price"
+          min={10}
+          max={100}
+          hasMarks={true}
+          showTooltip={true}
+          labelFor="Price"
+          labelTitle="Price"
+          labelValue={price[0]}
+          onValueCommit={setPrice}
+        />
+        <div className="flex gap-2 w-full mt-4">
           <Button
             className="flex-1 text-white cursor-pointer"
             onClick={handleAddBeer}

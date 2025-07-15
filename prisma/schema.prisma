@@ -13,4 +13,5 @@ model User {
   password       String
   beersConsumed  Int    @default(0)
   litresConsumed Float  @default(0)
+  moneySpent     Float  @default(0)
 }

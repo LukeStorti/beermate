@@ -2,8 +2,8 @@
 
 import { prisma } from "../../prisma/prisma";
 
-export const addBeer = async (userId: string, volume: number) => {
-  if (!userId || !volume) return;
+export const addBeer = async (userId: string, volume: number, price: number) => {
+  if (!userId || !volume || !price) return;
 
   const litres = volume / 1000;
 
@@ -18,6 +18,9 @@ export const addBeer = async (userId: string, volume: number) => {
         },
         beersConsumed: {
           increment: 1,
+        },
+        moneySpent: {
+          increment: price,
         },
       },
     });

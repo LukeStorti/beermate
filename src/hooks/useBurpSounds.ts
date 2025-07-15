@@ -2,7 +2,7 @@
 
 import useSound from "use-sound";
 
-export function useBurpSounds(volume: number = 0.2) {
+export function useBurpSounds(volume: number = 0.009) {
   const [play1] = useSound("/burp.mp3", { volume });
   const [play2] = useSound("/burp2.mp3", { volume });
   const [play3] = useSound("/burp3.mp3", { volume });
@@ -12,7 +12,7 @@ export function useBurpSounds(volume: number = 0.2) {
 
   const playRandomBurp = () => {
     const randomIndex = Math.floor(Math.random() * playSounds.length);
-    console.log("Playing sound", randomIndex);
+
     playSounds[randomIndex]?.();
   };
 
