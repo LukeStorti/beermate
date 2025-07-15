@@ -10,7 +10,7 @@ type Props = {
 };
 
 export default async function Profile({ params }: Props) {
-  const { id: userId } = await params;
+  const { id: userId } = params;
 
   if (!userId) {
     return <AuthForm />;
